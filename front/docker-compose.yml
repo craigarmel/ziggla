@@ -1,0 +1,103 @@
+version: '3.8'
+
+services:
+  # Frontend client
+  client:
+    build:
+      context: ./front/client
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=development
+      
+  # Frontend admin
+  admin:
+    build:
+      context: ./front/admin
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3001"
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=development
+      
+  # Si vous avez un backend
+  ziggla-backend:
+    build:
+      context: ./path/to/backend
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    restart: unless-stopped
+    depends_on:
+      - mongo
+    environment:
+      - NODE_ENV=development
+      - MONGODB_URI=mongodb://mongo:27017/ziggla
+      
+  # Base de données MongoDB
+  mongo:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    
+  # Auth microservice
+  auth-service:
+    build:
+      context: ./back/services/auth
+      dockerfile: Dockerfile
+    ports:
+      - "5001:5000"
+    restart: unless-stopped
+    depends_on:
+      - mongo
+    environment:
+      - NODE_ENV=development
+      - MONGODB_URI=mongodb://mongo:27017/auth
+
+  # Booking microservice
+  booking-service:
+    build:
+      context: ./back/services/booking
+      dockerfile: Dockerfile
+    ports:
+      - "5002:5000"
+    restart: unless-stopped
+    depends_on:
+      - mongo
+    environment:
+      - NODE_ENV=development
+      - MONGODB_URI=mongodb://mongo:27017/booking
+
+  # Calendar microservice
+  calendar-service:
+    build:
+      context: ./back/services/calendar
+      dockerfile: Dockerfile
+    ports:
+      - "5003:5000"
+    restart: unless-stopped
+    depends_on:
+      - mongo
+    environment:
+      - NODE_ENV=development
+      - MONGODB_URI=mongodb://mongo:27017/calendar
+
+  # API Gateway
+  api-gateway:
+    build:
+      context: ./back/api-gateway
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+    depends_on:
+      - auth-service
+      - booking-service
+      - calendar-service
+    environment:
+      - NODE_ENV=development

@@ -1,0 +1,146 @@
+erDiagram
+    USERS {
+        int user_id PK
+        varchar firstname
+        varchar lastname
+        varchar email
+        varchar password_hash
+        varchar phone_number
+        varchar profile_picture
+        date date_of_birth
+        timestamp created_at
+        timestamp updated_at
+        boolean is_admin
+        int loyalty_points
+        varchar preferred_language
+        boolean is_active
+    }
+    
+    PROPERTIES {
+        int property_id PK
+        varchar name
+        varchar type
+        int surface_area
+        int max_occupancy
+        int bedroom_count
+        int bathroom_count
+        text description
+        varchar address
+        varchar city
+        decimal base_price
+        decimal weekly_price
+        decimal biweekly_price
+        decimal deposit_amount
+        boolean is_active
+        boolean adults_only
+        int min_age
+    }
+    
+    PROPERTY_IMAGES {
+        int image_id PK
+        int property_id FK
+        varchar image_path
+        boolean is_main
+        int order
+    }
+    
+    AMENITIES {
+        int amenity_id PK
+        varchar name
+        varchar icon
+        varchar category
+        text description
+    }
+    
+    PROPERTY_AMENITIES {
+        int property_id FK
+        int amenity_id FK
+    }
+    
+    POINTS_OF_INTEREST {
+        int poi_id PK
+        varchar name
+        varchar type
+        varchar address
+        decimal latitude
+        decimal longitude
+    }
+    
+    PROPERTY_POIS {
+        int property_id FK
+        int poi_id FK
+        decimal distance
+        int travel_time
+    }
+    
+    AVAILABILITY_CALENDAR {
+        int calendar_id PK
+        int property_id FK
+        date date
+        boolean is_available
+        decimal custom_price
+    }
+    
+    BOOKINGS {
+        int booking_id PK
+        int user_id FK
+        int property_id FK
+        date check_in_date
+        date check_out_date
+        int guests_count
+        decimal total_price
+        boolean deposit_paid
+        enum status
+        enum payment_status
+        varchar payment_method
+        timestamp booking_date
+    }
+    
+    REVIEWS {
+        int review_id PK
+        int booking_id FK
+        int user_id FK
+        int property_id FK
+        decimal rating
+        text comment
+        timestamp created_at
+        timestamp visibility_date
+        boolean is_approved
+    }
+    
+    DISCOUNTS {
+        int discount_id PK
+        int property_id FK
+        varchar name
+        enum type
+        decimal value
+        int min_stay
+        date start_date
+        date end_date
+    }
+    
+    SECURITY_FEATURES {
+        int feature_id PK
+        varchar name
+        varchar icon
+    }
+    
+    PROPERTY_SECURITY {
+        int property_id FK
+        int feature_id FK
+    }
+    
+    USERS ||--o{ BOOKINGS : makes
+    PROPERTIES ||--o{ BOOKINGS : receives
+    PROPERTIES ||--o{ PROPERTY_IMAGES : has
+    PROPERTIES ||--o{ AVAILABILITY_CALENDAR : has
+    PROPERTIES ||--o{ PROPERTY_AMENITIES : has
+    AMENITIES ||--o{ PROPERTY_AMENITIES : included_in
+    PROPERTIES ||--o{ PROPERTY_POIS : near
+    POINTS_OF_INTEREST ||--o{ PROPERTY_POIS : located_near
+    BOOKINGS ||--o{ REVIEWS : receives
+    USERS ||--o{ REVIEWS : writes
+    PROPERTIES ||--o{ REVIEWS : about
+    PROPERTIES ||--o{ DISCOUNTS : offers
+    PROPERTIES ||--o{ PROPERTY_SECURITY : has
+    SECURITY_FEATURES ||--o{ PROPERTY_SECURITY : used_in
