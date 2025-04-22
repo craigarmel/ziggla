@@ -60,7 +60,8 @@ const registerUser = async (req, res) => {
 // @route   POST /api/auth/login
 // @access  Public
 const loginUser = async (req, res) => {
-  const { email, password } = req.body;
+  const email = req.body.email || req.query.email;
+  const password = req.body.password || req.query.password;
   
   try {
     console.log('Tentative de connexion pour:', email);
