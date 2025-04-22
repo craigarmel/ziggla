@@ -4,13 +4,15 @@ const {
   registerUser, 
   loginUser, 
   getUserProfile, 
-  validateToken 
+  validateToken,
+  authenticateToken
 } = require('../controllers/authController');
 const { protect, admin } = require('../middleware/authMiddleware');
 
 // Routes publiques
 router.post('/register', registerUser);
 router.post('/login', loginUser);
+router.post('/verify', authenticateToken, validateToken);
 
 // Routes protégées
 router.get('/profile', protect, getUserProfile);

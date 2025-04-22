@@ -1,5 +1,6 @@
 const User = require('../models/User');
 const generateToken = require('../utils/generateToken');
+const jwt = require('jsonwebtoken');
 
 // @desc    Inscription d'un nouvel utilisateur
 // @route   POST /api/auth/register
@@ -140,23 +141,74 @@ const getUserProfile = async (req, res) => {
 // @desc    Vérifier si le token est valide
 // @route   GET /api/auth/validate
 // @access  Private
-const validateToken = async (req, res) => {
-  res.status(200).json({ 
-    valid: true, 
-    user: {
-      _id: req.user._id,
-      firstName: req.user.firstName,
-      lastName: req.user.lastName,
-      email: req.user.email,
-      role: req.user.role,
-      isAdmin: req.user.isAdmin
+const authenticateToken = async (req, res, next) => {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
+  
+  if (!token) return res.status(401).json({ error: 'Access denied' });
+  
+  try {
+    // Verify token
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    
+    // Fetch complete user data from database
+    const user = await User.findById(decoded._id || decoded.id).select('-password');
+    
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        error: 'User not found'
+      });
     }
-  });
+    
+    // Set user data in request
+    req.user = user;
+    next();
+  } catch (err) {
+    console.error('Token verification error:', err);
+    return res.status(403).json({ error: 'Invalid token' });
+  }
+};
+
+// @desc    Vérifier si le token est valide
+// @route   GET /api/auth/validate
+// @access  Private
+const validateToken = async (req, res) => {
+  // Réutilise la logique de getUserProfile pour retourner les infos utilisateur
+  try {
+    const user = await User.findById(req.user._id);
+
+    if (user) {
+      res.status(200).json({
+        success: true,
+        user: {
+          _id: user._id,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          email: user.email,
+          role: user.role,
+          isAdmin: user.isAdmin,
+          loyaltyPoints: user.loyaltyPoints || 0,
+          preferredLanguage: user.preferredLanguage || 'fr'
+        }
+      });
+    } else {
+      res.status(404).json({ success: false, message: 'Utilisateur non trouvé' });
+    }
+  } catch (error) {
+    console.error('Erreur lors de la validation du token:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur serveur lors de la validation du token',
+      error: process.env.NODE_ENV === 'development' ? error.message : 'Détails masqués en production'
+    });
+  }
 };
 
 module.exports = {
   registerUser,
   loginUser,
   getUserProfile,
-  validateToken
+  validateToken,
+  authenticateToken
 };
