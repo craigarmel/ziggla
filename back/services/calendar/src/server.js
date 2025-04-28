@@ -2,7 +2,6 @@ const express = require('express');
 const dotenv = require('dotenv');
 const cors = require('cors');
 const mongoose = require('mongoose');
-const errorHandler = require('./middleware/errorHandler');
 
 // Charger les variables d'environnement
 dotenv.config();
@@ -37,13 +36,17 @@ mongoose.connect(process.env.MONGO_URI, {
 const calendarRoutes = require('./routes/calendarRoutes');
 app.use('/api/calendar', calendarRoutes);
 
+// const bookingRoutes = require('./routes/bookingRoutes');
+// Use the booking routes
+// app.use('/api/bookings', bookingRoutes);
+
 // Route racine
 app.get('/', (req, res) => {
   res.send('API du service de calendrier est en ligne');
 });
 
 // Middleware pour la gestion des erreurs
-app.use(errorHandler);
+// app.use(errorHandler);
 
 // Démarrer le serveur
 const PORT = process.env.PORT || 5002;

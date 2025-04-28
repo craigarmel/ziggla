@@ -1,0 +1,201 @@
+[{
+  "_id": {
+    "$oid": "5f8e73f1b54764421b709e3a"
+  },
+  "name": "Ziggla Luxury Apartments",
+  "type": "apartment",
+  "surfaceArea": 200,
+  "maxOccupancy": 3,
+  "bedroomCount": 1,
+  "bathroomCount": 1,
+  "description": "Magnifique appartement de luxe situé au cœur de Londres. Profitez d'un jacuzzi privé et d'une vue imprenable sur la ville.",
+  "shortDescription": "Appartement de luxe avec jacuzzi et vue panoramique",
+  "location": {
+    "address": "Fulham Road",
+    "postalCode": "SW6",
+    "city": "London",
+    "country": "United Kingdom",
+    "coordinates": {
+      "latitude": 51.4812,
+      "longitude": -0.1933
+    }
+  },
+  "pricing": {
+    "basePrice": 110,
+    "weeklyPrice": 105,
+    "biweeklyPrice": 100,
+    "depositAmount": 150,
+    "currency": "GBP"
+  },
+  "images": [
+    {
+      "url": "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1980&q=80",
+      "title": "Vue principale",
+      "isMain": true,
+      "order": 1
+    },
+    {
+      "url": "https://images.unsplash.com/photo-1560448205-4d9b3e6bb6db?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80",
+      "title": "Chambre à coucher",
+      "isMain": false,
+      "order": 2
+    },
+    {
+      "url": "https://images.unsplash.com/photo-1584622781564-1d987f7333c1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80",
+      "title": "Bain à remous",
+      "isMain": false,
+      "order": 3
+    }
+  ],
+  "amenities": [
+    {
+      "category": "Salle de bain",
+      "items": [
+        {
+          "name": "Baignoire spa",
+          "icon": "hot-tub",
+          "description": "Baignoire équipée de jets d'eau pour massage relaxant"
+        },
+        {
+          "name": "Douche",
+          "icon": "shower",
+          "description": "Douche spacieuse"
+        },
+        {
+          "name": "Articles de toilette",
+          "icon": "toiletries",
+          "description": "Shampoing et produits de bain fournis"
+        }
+      ]
+    },
+    {
+      "category": "Cuisine",
+      "items": [
+        {
+          "name": "Cuisine équipée",
+          "icon": "kitchen",
+          "description": "Cuisine complète avec tous les ustensiles nécessaires"
+        },
+        {
+          "name": "Lave-vaisselle",
+          "icon": "dishwasher",
+          "description": "Lave-vaisselle moderne"
+        },
+        {
+          "name": "Machine à café",
+          "icon": "coffee",
+          "description": "Machine à café haut de gamme"
+        }
+      ]
+    },
+    {
+      "category": "Divertissement",
+      "items": [
+        {
+          "name": "Télévision à écran plat",
+          "icon": "tv",
+          "description": "TV HD avec chaînes internationales"
+        },
+        {
+          "name": "Wi-Fi rapide",
+          "icon": "wifi",
+          "description": "Connexion Wi-Fi 66 Mb/s"
+        }
+      ]
+    }
+  ],
+  "pointsOfInterest": [
+    {
+      "name": "Stamford Bridge - Chelsea FC Stadium",
+      "type": "stadium",
+      "distance": 2.1,
+      "travelTime": 10,
+      "transportMode": "walk"
+    },
+    {
+      "name": "Fulham Football Club",
+      "type": "stadium",
+      "distance": 1.5,
+      "travelTime": 7,
+      "transportMode": "walk"
+    },
+    {
+      "name": "Fulham Palace",
+      "type": "historic",
+      "distance": 1.2,
+      "travelTime": 5,
+      "transportMode": "walk"
+    },
+    {
+      "name": "London Heathrow Airport",
+      "type": "airport",
+      "distance": 21,
+      "travelTime": 20,
+      "transportMode": "drive"
+    }
+  ],
+  "isActive": true
+},
+{
+  "_id": {
+    "$oid": "5f8e73f2b54764421b709e4a"
+  },
+  "name": "Ziggla Luxury Properties",
+  "type": "studio",
+  "surfaceArea": 200,
+  "maxOccupancy": 2,
+  "bedroomCount": 0,
+  "bathroomCount": 1,
+  "description": "Studio luxueux au cœur de Londres avec cuisine toute équipée et salle de bain luxueuse avec jacuzzi.",
+  "shortDescription": "Studio de luxe avec jacuzzi dans le quartier de Fulham",
+  "location": {
+    "address": "Fulham Road",
+    "postalCode": "SW6",
+    "city": "London",
+    "country": "United Kingdom",
+    "coordinates": {
+      "latitude": 51.4814,
+      "longitude": -0.1935
+    }
+  },
+  "pricing": {
+    "basePrice": 110,
+    "weeklyPrice": 105,
+    "biweeklyPrice": 100,
+    "depositAmount": 150,
+    "currency": "GBP"
+  },
+  "images": [
+    {
+      "url": "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80",
+      "title": "Vue principale",
+      "isMain": true,
+      "order": 1
+    },
+    {
+      "url": "https://images.unsplash.com/photo-1564566500768-c7c7f7f34b87?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80",
+      "title": "Cuisine équipée",
+      "isMain": false,
+      "order": 2
+    },
+    {
+      "url": "https://images.unsplash.com/photo-1617098650990-217c7cf9de26?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80",
+      "title": "Bain à remous",
+      "isMain": false,
+      "order": 3
+    }
+  ],
+  "amenities": [
+    {
+      "category": "Salle de bain",
+      "items": [
+        {
+          "name": "Baignoire spa",
+          "icon": "hot-tub",
+          "description": "Baignoire équipée de jets d'eau pour massage relaxant"
+        }
+      ]
+    }
+  ],
+  "isActive": true
+}]

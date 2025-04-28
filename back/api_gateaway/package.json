@@ -1,0 +1,19 @@
+{
+  "name": "api_gateaway",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "node api-gateway.js",
+    "dev": "nodemon api-gateway.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "http": "^0.0.1-security",
+    "http-proxy-middleware": "^3.0.5"
+  }
+}

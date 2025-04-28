@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { usePropertyContext } from '../../context/PropertyContext';
 import useAuth from '../../hooks/useAuth';
+import calendarService from '../../services/calendarService';
 
 const PropertyBookingForm = ({ property, propertyId }) => {
   // On utilise soit la propriété passée en props, soit on la récupère via l'ID
@@ -58,24 +59,19 @@ const PropertyBookingForm = ({ property, propertyId }) => {
     setIsSubmitting(true);
     
     try {
-      // Vérifier si la fonction checkAvailability existe dans le contexte
-      if (propertyContext?.checkAvailability) {
-        const result = await propertyContext.checkAvailability(
-          propertyToUse._id || propertyId, 
-          booking.startDate, 
-          booking.endDate
-        );
-        setAvailability(result);
-        
-        if (result.available) {
-          setError(null);
-        } else {
-          setError('Cette propriété n\'est pas disponible aux dates sélectionnées.');
-        }
-      } else {
-        // Simulation de disponibilité si l'API n'est pas disponible
-        setAvailability({ available: true });
+      // Appel à l'API du calendrier pour vérifier la disponibilité
+      const result = await calendarService.checkAvailability(
+        propertyToUse._id || propertyId, 
+        booking.startDate, 
+        booking.endDate
+      );
+      
+      setAvailability(result);
+      
+      if (result.available) {
         setError(null);
+      } else {
+        setError('Cette propriété n\'est pas disponible aux dates sélectionnées.');
       }
     } catch (err) {
       setError('Erreur lors de la vérification de disponibilité. Veuillez réessayer.');
@@ -99,14 +95,26 @@ const PropertyBookingForm = ({ property, propertyId }) => {
       return;
     }
     
+    if (!availability || !availability.available) {
+      setError('Veuillez vérifier la disponibilité avant de réserver.');
+      return;
+    }
+    
     setIsSubmitting(true);
     
     try {
-      // Ici vous feriez un appel API pour créer la réservation
-      // const result = await bookingService.createBooking({...booking, propertyId, userId: user.id});
+      // Créer une réservation dans le calendrier
+      const bookingData = {
+        propertyId: propertyToUse._id || propertyId,
+        title: `Réservation - ${user.firstName || user.name || 'Client'} ${user.lastName || ''}`,
+        startDate: booking.startDate,
+        endDate: booking.endDate,
+        guests: booking.guests,
+        notes: booking.message,
+        userId: user.id
+      };
       
-      // Simuler un succès pour l'exemple
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await calendarService.createBooking(bookingData);
       
       setSuccess(true);
       setError(null);

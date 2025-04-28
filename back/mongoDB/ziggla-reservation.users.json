@@ -1,0 +1,35 @@
+[{
+  "_id": {
+    "$oid": "680653888859ca49263ec654"
+  },
+  "firstName": "Harry",
+  "lastName": "Hall",
+  "email": "loulouctv@gmail.com",
+  "passwordHash": "$2b$10$RFG/mxEmiuVtqDOEQfnkP.6b6iwXhG4kv0wOQA431fk2ExURe9ANi",
+  "username": "loulouctv",
+  "phoneNumber": null,
+  "profilePicture": null,
+  "dateOfBirth": null,
+  "loyaltyPoints": 0,
+  "preferredLanguage": "fr",
+  "isActive": true,
+  "role": "user",
+  "isAdmin": false,
+  "notificationPreferences": {
+    "email": true,
+    "sms": false,
+    "promotions": true
+  },
+  "lastLogin": {
+    "$date": "2025-04-21T14:17:44.704Z"
+  },
+  "addresses": [],
+  "paymentMethods": [],
+  "createdAt": {
+    "$date": "2025-04-21T14:17:44.722Z"
+  },
+  "updatedAt": {
+    "$date": "2025-04-21T14:17:44.722Z"
+  },
+  "__v": 0
+}]

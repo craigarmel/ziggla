@@ -3,6 +3,7 @@ import PropertyGallery from './PropertyGallery';
 import PropertyAmenities from './PropertyAmenities';
 import PropertyBookingForm from './PropertyBookingForm';
 import ErrorBoundary from '../common/errorBoundary';
+import CalendarAvailability from './CalendarAvailability';
 
 const PropertyDetail = ({ property }) => {
   useEffect(() => {
@@ -245,11 +246,16 @@ const PropertyDetail = ({ property }) => {
             </div>
           )}
         </div>
-        
-        {/* Formulaire de réservation */}
-        <div className="lg:col-span-1">
+
+        {/* Formulaire de réservation et calendrier */}
+        <div className="lg:col-span-1 space-y-6">
           <ErrorBoundary fallback={bookingFormFallback}>
             <PropertyBookingForm property={property} />
+          </ErrorBoundary>
+          
+          {/* Calendrier des disponibilités */}
+          <ErrorBoundary>
+            <CalendarAvailability propertyId={property._id} />
           </ErrorBoundary>
         </div>
       </div>

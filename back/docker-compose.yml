@@ -1,0 +1,157 @@
+version: '3.8'
+
+services:
+  # Service d'authentification
+  auth:
+    build:
+      context: ./back/services/auth
+      dockerfile: Dockerfile
+    container_name: ziggla-auth
+    restart: always
+    ports:
+      - "5000:5000"
+    environment:
+      - NODE_ENV=development
+      - PORT=5000
+      - MONGO_URI=mongodb://mongo:27017/ziggla
+      - JWT_SECRET=your_jwt_secret_key
+      - JWT_EXPIRE=30d
+    depends_on:
+      - mongo
+    networks:
+      - ziggla-network
+
+  # Service de gestion des propriétés
+  properties:
+    build:
+      context: ./back/services/properties
+      dockerfile: Dockerfile
+    container_name: ziggla-properties
+    restart: always
+    ports:
+      - "5001:5001"
+    environment:
+      - NODE_ENV=development
+      - PORT=5001
+      - MONGO_URI=mongodb://mongo:27017/ziggla
+      - AUTH_SERVICE_URL=http://auth:5000
+    depends_on:
+      - mongo
+      - auth
+    networks:
+      - ziggla-network
+
+  # Service de gestion de réservations
+  bookings:
+    build:
+      context: ./back/services/bookings
+      dockerfile: Dockerfile
+    container_name: ziggla-bookings
+    restart: always
+    ports:
+      - "5003:5003"
+    environment:
+      - NODE_ENV=development
+      - PORT=5003
+      - MONGO_URI=mongodb://mongo:27017/ziggla
+      - AUTH_SERVICE_URL=http://auth:5003
+      - CALENDAR_SERVICE_URL=http://calendar:5002
+      - PROPERTIES_SERVICE_URL=http://properties:5001
+    depends_on:
+      - mongo
+      - auth
+      - properties
+    networks:
+      - ziggla-network
+
+  # Service de gestion des avis
+  reviews:
+    build:
+      context: ./back/services/reviews
+      dockerfile: Dockerfile
+    container_name: ziggla-reviews
+    restart: always
+    ports:
+      - "5004:5004"
+    environment:
+      - NODE_ENV=development
+      - PORT=5004
+      - MONGO_URI=mongodb://mongo:27017/ziggla
+      - AUTH_SERVICE_URL=http://auth:5000
+    depends_on:
+      - mongo
+      - auth
+    networks:
+      - ziggla-network
+
+  # Service de gestion du calendrier
+  calendar:
+    build:
+      context: ./back/services/calendar
+      dockerfile: Dockerfile
+    container_name: ziggla-calendar
+    restart: always
+    ports:
+      - "5002:5002"
+    environment:
+      - NODE_ENV=development
+      - PORT=5002
+      - MONGO_URI=mongodb://mongo:27017/ziggla
+      - GOOGLE_CALENDAR_ID=your_calendar_id
+      - GOOGLE_CALENDAR_EMAIL=your_calendar_email
+      - GOOGLE_PRIVATE_KEY=your_private_key
+      - AUTH_SERVICE_URL=http://auth:5000
+    volumes:
+      - ./back/services/calendar/credentials.json:/app/credentials.json
+      - ./back/services/calendar/token.json:/app/token.json
+    depends_on:
+      - mongo
+      - auth
+    networks:
+      - ziggla-network
+
+  # Frontend (à configurer ultérieurement)
+  frontend:
+    build:
+      context: ../front/client
+      dockerfile: Dockerfile
+    container_name: ziggla-frontend
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - REACT_APP_API_URL=http://localhost
+      - REACT_APP_AUTH_PORT=5000
+      - REACT_APP_PROPERTIES_PORT=5001
+      - REACT_APP_CALENDAR_PORT=5002
+      - REACT_APP_BOOKINGS_PORT=5003
+      - REACT_APP_REVIEWS_PORT=5004
+    depends_on:
+      - auth
+      - properties
+      - calendar
+    networks:
+      - ziggla-network
+
+  # Base de données MongoDB
+  mongo:
+    image: mongo:latest
+    container_name: ziggla-mongo
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - ziggla-network
+
+# Volumes persistants
+volumes:
+  mongo-data:
+    driver: local
+
+# Réseau dédié pour les services
+networks:
+  ziggla-network:
+    driver: bridge

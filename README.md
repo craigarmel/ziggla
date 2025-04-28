@@ -1,228 +1,277 @@
-# Application de Réservation en Ligne
+# Projet Ziggla - Guide d'installation et de configuration
 
-## Présentation
+## Vue d'ensemble
 
-Cette application de réservation en ligne est une plateforme complète permettant de gérer des propriétés locatives, des réservations, des paiements et l'interaction entre hôtes et clients. Développée avec une architecture microservices, elle offre une solution robuste, évolutive et hautement personnalisable.
+Ziggla est une plateforme de réservation basée sur une architecture microservices. Ce document vous guidera à travers les étapes nécessaires pour configurer et déployer l'ensemble de la plateforme.
 
-## Architecture Microservices
+## Architecture du projet
 
-L'application est construite autour de 15 microservices spécialisés qui communiquent entre eux via une API Gateway centrale :
+Le projet est composé des microservices suivants :
 
-1. **Service d'authentification et de gestion utilisateurs**
-   - Inscription, connexion et déconnexion
-   - Gestion des profils (clients et administrateurs)
-   - Authentification JWT et refresh tokens
-   - Gestion des rôles et des permissions
-   - Réinitialisation des mots de passe
+- **Auth service** (port 5000) : Gestion de l'authentification et des utilisateurs
+- **Properties service** (port 5001) : Gestion des propriétés et des annonces
+- **Calendar service** (port 5002) : Gestion des disponibilités et synchronisation avec Google Calendar
+- **Bookings service** (port 5003) : Gestion des réservations
+- **Reviews service** (port 5004) : Gestion des avis et commentaires
+- **Frontend** (port 3000) : Interface utilisateur
 
-2. **Service de gestion des propriétés**
-   - CRUD des propriétés et leurs détails
-   - Gestion des équipements (amenities)
-   - Stockage et gestion des images
-   - Gestion des caractéristiques de sécurité
-   - Tarification (standard, hebdomadaire, bi-hebdomadaire)
+## Prérequis
 
-3. **Service de calendrier et disponibilités**
-   - Gestion du calendrier de disponibilité
-   - Vérification des disponibilités en temps réel
-   - Blocage et déblocage de dates
-   - Tarification spéciale par date
-   - Intégration avec les API de calendrier externes
-   - Synchronisation entre différents canaux de réservation
+- [Docker](https://docs.docker.com/get-docker/) et [Docker Compose](https://docs.docker.com/compose/install/)
+- [Git](https://git-scm.com/downloads)
+- [Node.js](https://nodejs.org/) (pour le développement local)
+- Compte Google Cloud Platform (pour les fonctionnalités de calendrier)
 
-4. **Service de réservation**
-   - Création et gestion des réservations
-   - Gestion des annulations et modifications
-   - Calcul des prix (incluant réductions)
-   - Gestion des demandes spéciales
-   - États des réservations (confirmé, annulé, etc.)
+## 1. Préparation de l'environnement
 
-5. **Service de paiement**
-   - Intégration avec PayPal, Stripe, etc.
-   - Gestion des dépôts de garantie
-   - Remboursements
-   - Facturation
-   - Sécurisation des transactions
-   - Historique des paiements
-
-6. **Service de géolocalisation et cartographie**
-   - Intégration avec l'API Google Maps ou alternatives
-   - Affichage des propriétés sur la carte
-   - Calcul des distances avec les points d'intérêt
-   - Recherche géographique de propriétés
-   - Suggestions basées sur la localisation
-
-7. **Service de recherche et filtrage**
-   - Recherche avancée de propriétés
-   - Filtrage par critères (équipements, prix, dates)
-   - Indexation des contenus pour recherche rapide
-   - Suggestions de recherche
-   - Recherche par localisation
-
-8. **Service de notifications**
-   - Notifications par email
-   - SMS/notifications push
-   - Rappels (check-in, check-out)
-   - Alertes système
-   - Notifications administrateurs
-
-9. **Service de reviews et évaluations**
-   - Gestion des avis clients
-   - Calcul des notes moyennes
-   - Modération des commentaires
-   - Publication différée (après 2 semaines)
-   - Réponses aux avis par les administrateurs
-
-10. **Service de contenu et CMS**
-    - Gestion des pages statiques
-    - Blog et articles
-    - FAQ et aide
-    - Traductions et internationalisation
-    - Ressources médias
-
-11. **Service d'analyse et statistiques**
-    - Tableau de bord administrateur
-    - Rapports de performance
-    - Statistiques de réservation
-    - Comportement utilisateur
-    - Prévisions et tendances
-
-12. **Service de messaging**
-    - Communication entre clients et hôtes
-    - Historique des conversations
-    - Notifications de nouveaux messages
-    - Modèles de réponses pour l'équipe
-
-13. **Service de promotion et réductions**
-    - Gestion des codes promotionnels
-    - Programmes de fidélité
-    - Réductions saisonnières
-    - Offres spéciales
-    - Attribution automatique des réductions
-
-14. **Service de recommandation**
-    - Suggestions personnalisées
-    - Propriétés similaires
-    - Points d'intérêt à proximité
-    - Recommandations basées sur l'historique
-
-15. **API Gateway**
-    - Point d'entrée unifié pour les clients
-    - Routage des requêtes vers les microservices
-    - Gestion de l'authentification
-    - Limitation de débit (rate limiting)
-    - Logging et monitoring
-
-## Installation
+### Cloner le dépôt
 
 ```bash
-# Cloner le dépôt
-git clone https://github.com/votre-organisation/application-reservation.git
-
-# Accéder au répertoire du projet
-cd application-reservation
-
-# Installer les dépendances
-docker-compose build
+git clone <URL_DU_DEPOT_GIT>
+cd ziggla
 ```
 
-## Configuration
+### Structure des dossiers
 
-1. Copiez le fichier `.env.example` en `.env` et configurez les variables d'environnement nécessaires :
-   ```bash
-   cp .env.example .env
-   ```
+Assurez-vous que votre structure de dossiers est organisée comme suit :
 
-2. Modifiez les configurations spécifiques de chaque microservice selon vos besoins dans le dossier `config/`.
+```
+ziggla/
+├── back/
+│   └── services/
+│       ├── auth/
+│       ├── bookings/
+│       ├── calendar/
+│       ├── properties/
+│       └── reviews/
+├── front/
+│   └── client/
+└── docker-compose.yml
+```
 
-## Démarrage
+## 2. Configuration du service Calendar (Google Calendar API)
+
+Le service Calendar nécessite des identifiants pour se connecter à l'API Google Calendar :
+
+### Obtenir des identifiants Google Cloud
+
+1. Connectez-vous à la [Console Google Cloud](https://console.cloud.google.com/)
+2. Créez un nouveau projet
+3. Activez l'API Google Calendar pour ce projet
+4. Créez des identifiants OAuth 2.0
+5. Téléchargez le fichier JSON des identifiants
+
+### Configurer les fichiers d'authentification
+
+1. Renommez le fichier d'identifiants téléchargé en `credentials.json`
+2. Placez-le dans le dossier `back/services/calendar/`
+3. Le fichier `token.json` sera généré automatiquement lors de la première connexion
+
+## 3. Configuration des variables d'environnement
+
+Créez un fichier `.env` à la racine du projet avec les variables suivantes :
+
+```env
+# Variables globales
+NODE_ENV=development
+
+# MongoDB
+MONGO_URI=mongodb://mongo:27017/ziggla
+
+# Auth Service
+JWT_SECRET=votre_cle_secrete_tres_securisee
+JWT_EXPIRE=30d
+
+# Google Calendar
+GOOGLE_CALENDAR_ID=votre_id_calendrier@group.calendar.google.com
+GOOGLE_CALENDAR_EMAIL=votre_email@google.com
+GOOGLE_PRIVATE_KEY=votre_clé_privée
+```
+
+> **Note** : Ne jamais committer le fichier `.env` dans votre dépôt Git. Ajoutez-le au fichier `.gitignore`.
+
+## 4. Lancement des services avec Docker Compose
+
+### Construire et démarrer tous les services
 
 ```bash
-# Démarrer tous les services
 docker-compose up -d
+```
 
-# Vérifier le statut des services
+Cette commande construira toutes les images et démarrera tous les conteneurs en mode détaché.
+
+### Vérifier que les conteneurs sont en cours d'exécution
+
+```bash
 docker-compose ps
 ```
 
-L'application sera accessible à l'adresse : http://localhost:3000
+### Consulter les logs
 
-## Documentation API
-
-La documentation complète de l'API est disponible à l'adresse : http://localhost:3000/api/docs
-
-## Technologies utilisées
-
-- **Backend** : Node.js, Express, Nest.js
-- **Frontend** : React, Redux, Material UI
-- **Base de données** : MongoDB, PostgreSQL, Redis
-- **Messagerie** : RabbitMQ
-- **Authentification** : JWT, OAuth2
-- **Conteneurisation** : Docker, Kubernetes
-- **CI/CD** : Jenkins, GitHub Actions
-- **Monitoring** : Prometheus, Grafana
-
-## Développement
-
-### Structure du projet
-
-```
-application-reservation/
-├── api-gateway/
-├── services/
-│   ├── auth-service/
-│   ├── property-service/
-│   ├── calendar-service/
-│   ├── booking-service/
-│   ├── payment-service/
-│   └── ...
-├── frontend/
-├── config/
-├── scripts/
-└── docs/
-```
-
-### Tests
+Pour voir les logs de tous les services :
 
 ```bash
-# Exécuter tous les tests
-npm run test
-
-# Exécuter les tests d'un service spécifique
-npm run test -- --scope=auth-service
+docker-compose logs
 ```
 
-## Déploiement
-
-### Production
+Pour un service spécifique :
 
 ```bash
-# Construire pour la production
-docker-compose -f docker-compose.prod.yml build
+docker-compose logs auth
+```
 
-# Déployer en production
+## 5. Accès aux différents services
+
+Une fois les conteneurs démarrés, vous pouvez accéder aux services suivants :
+
+- Frontend : http://localhost:3000
+- Auth API : http://localhost:5000
+- Properties API : http://localhost:5001
+- Calendar API : http://localhost:5002
+- Bookings API : http://localhost:5003
+- Reviews API : http://localhost:5004
+- MongoDB : mongodb://localhost:27017
+
+## 6. Développement local sans Docker
+
+Si vous préférez développer sans Docker, suivez ces étapes pour chaque service :
+
+### Installer MongoDB localement
+
+Téléchargez et installez [MongoDB Community Edition](https://www.mongodb.com/try/download/community)
+
+### Configuration des services backend
+
+Pour chaque service dans le dossier `back/services/` :
+
+1. Naviguez vers le dossier du service
+2. Créez un fichier `.env` local avec les variables appropriées
+3. Installez les dépendances et démarrez le service :
+
+```bash
+cd back/services/auth
+npm install
+npm run dev
+```
+
+Répétez pour chaque service en adaptant le chemin et les variables d'environnement.
+
+### Configuration du frontend
+
+```bash
+cd front/client
+npm install
+npm run dev
+```
+
+## 7. Gestion des données MongoDB
+
+### Accéder à la base de données via MongoDB Compass
+
+1. Installez [MongoDB Compass](https://www.mongodb.com/try/download/compass)
+2. Connectez-vous à `mongodb://localhost:27017/ziggla`
+
+### Sauvegarde des données
+
+Pour sauvegarder votre base de données :
+
+```bash
+docker exec ziggla-mongo mongodump --out /data/db/backup
+```
+
+### Restauration des données
+
+Pour restaurer votre base de données :
+
+```bash
+docker exec ziggla-mongo mongorestore /data/db/backup
+```
+
+## 8. Déploiement en production
+
+### Sécurité
+
+Pour un déploiement en production, assurez-vous de :
+
+1. Utiliser des mots de passe forts pour MongoDB
+2. Configurer HTTPS pour tous les services
+3. Limiter l'accès aux ports et réseaux
+4. Mettre à jour régulièrement les dépendances
+
+### Variables d'environnement de production
+
+Modifiez votre fichier `.env` pour la production :
+
+```env
+NODE_ENV=production
+MONGO_URI=mongodb://username:password@mongo:27017/ziggla
+# Autres variables spécifiques à la production
+```
+
+### Construire et déployer
+
+```bash
 docker-compose -f docker-compose.prod.yml up -d
 ```
 
-### Staging
+## 9. Dépannage
+
+### Problèmes courants et solutions
+
+1. **Les conteneurs ne démarrent pas**
+   - Vérifiez les logs : `docker-compose logs`
+   - Assurez-vous que les ports ne sont pas déjà utilisés
+
+2. **Problèmes de connexion entre services**
+   - Vérifiez que les services sont sur le même réseau Docker
+   - Assurez-vous que les URLs des services sont correctes
+
+3. **Erreurs avec l'API Google Calendar**
+   - Vérifiez les permissions et que l'API est activée
+   - Assurez-vous que les identifiants sont corrects
+
+## 10. Maintenance
+
+### Mise à jour des services
+
+Pour mettre à jour un service après des modifications de code :
 
 ```bash
-# Déployer en environnement de staging
-docker-compose -f docker-compose.staging.yml up -d
+docker-compose build auth
+docker-compose up -d auth
 ```
 
-## Contribution
+### Nettoyage
 
-1. Forkez le projet
-2. Créez votre branche de fonctionnalité (`git checkout -b feature/nouvelle-fonctionnalite`)
-3. Committez vos changements (`git commit -m 'Ajout d'une nouvelle fonctionnalité'`)
-4. Pushez vers la branche (`git push origin feature/nouvelle-fonctionnalite`)
-5. Ouvrez une Pull Request
+Pour arrêter et supprimer tous les conteneurs, réseaux et volumes :
 
-## Licence
+```bash
+docker-compose down -v
+```
 
-Ce projet est sous licence [MIT](LICENSE).
+## 11. Ressources supplémentaires
 
-## Contact
+- [Documentation Docker](https://docs.docker.com/)
+- [Documentation MongoDB](https://docs.mongodb.com/)
+- [Documentation Google Calendar API](https://developers.google.com/calendar/api/guides/overview)
+- [Documentation Express.js](https://expressjs.com/)
+- [Documentation React](https://reactjs.org/docs/getting-started.html)
 
-Pour toute question ou suggestion, veuillez contacter l'équipe de développement à l'adresse craigarmel01@gmail.com
+## 12. Contribution au projet
+
+### Guide de contribution
+
+1. Créez une branche pour votre fonctionnalité : `git checkout -b feature/nouvelle-fonctionnalite`
+2. Committez vos changements : `git commit -m 'Ajouter une nouvelle fonctionnalité'`
+3. Poussez vers la branche : `git push origin feature/nouvelle-fonctionnalite`
+4. Ouvrez une Pull Request
+
+### Normes de codage
+
+- Suivez les conventions ESLint du projet
+- Écrivez des tests unitaires pour les nouvelles fonctionnalités
+- Documentez votre code
+
+---
+
+Pour toute question ou problème, veuillez ouvrir une issue dans le dépôt GitHub ou contacter l'équipe de développement.

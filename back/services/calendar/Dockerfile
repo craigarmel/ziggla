@@ -14,7 +14,7 @@ RUN npm install
 COPY . .
 
 # Exposer le port pour Vite
-EXPOSE 5000
+EXPOSE 5002
 
 # Commande pour démarrer l'application en mode développement
 CMD ["npm", "start"]
