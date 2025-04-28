@@ -164,6 +164,8 @@ npm install
 npm run dev
 ```
 
+Récupérez l'exemple de documents pour la base de données MongoDB dans le dossier `back/services/mongoDB/` et importez-le dans votre instance MongoDB locale.
+
 ## 7. Gestion des données MongoDB
 
 ### Accéder à la base de données via MongoDB Compass
