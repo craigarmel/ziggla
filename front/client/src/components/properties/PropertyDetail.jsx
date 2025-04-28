@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import PropertyGallery from './PropertyGallery';
 import PropertyAmenities from './PropertyAmenities';
 import PropertyBookingForm from './PropertyBookingForm';
+import ErrorBoundary from '../common/errorBoundary';
 
 const PropertyDetail = ({ property }) => {
   useEffect(() => {
@@ -22,6 +23,25 @@ const PropertyDetail = ({ property }) => {
     );
   }
 
+  // Fonction personnalisée pour afficher une erreur dans le formulaire de réservation
+  const bookingFormFallback = (error, errorInfo, reset) => (
+    <div className="bg-white rounded-lg shadow-md p-6">
+      <h3 className="text-xl font-serif font-bold mb-4 text-red-800">
+        Impossible de charger le formulaire de réservation
+      </h3>
+      <p className="text-gray-700 mb-4">
+        Nous rencontrons actuellement des difficultés pour afficher le formulaire de réservation.
+        Veuillez réessayer plus tard ou nous contacter directement.
+      </p>
+      <button 
+        onClick={reset}
+        className="px-4 py-2 bg-ocean-blue-600 text-white rounded-md hover:bg-ocean-blue-700 transition-colors"
+      >
+        Réessayer
+      </button>
+    </div>
+  );
+
   return (
     <div className="container-custom py-8">
       {/* Titre */}
@@ -30,17 +50,23 @@ const PropertyDetail = ({ property }) => {
       </h1>
       
       {/* Localisation */}
-      <div className="flex items-center text-gray-600 mb-6">
-        <svg className="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-        </svg>
-        <span>
-          {property.location.address}, {property.location.postalCode}, {property.location.city}, {property.location.country}
-        </span>
-      </div>
-      
-      {/* Galerie */}
+        <div className="flex items-center text-gray-600 mb-6">
+          <svg className="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+          </svg>
+          <span>
+            {property.location?.address || property.address?.address || property.city || ''}
+            {property.location?.postalCode || property.address?.postalCode || property.postalCode ? ', ' : ''}
+            {property.location?.postalCode || property.address?.postalCode || property.postalCode || ''}
+            {property.location?.city || property.address?.city || property.city ? ', ' : ''}
+            {property.location?.city || property.address?.city || property.city || ''}
+            {property.location?.country || property.address?.country || property.country ? ', ' : ''}
+            {property.location?.country || property.address?.country || property.country || ''}
+          </span>
+        </div>
+        
+        {/* Galerie */}
       <div className="mb-8">
         <PropertyGallery images={property.images} />
       </div>
@@ -53,26 +79,26 @@ const PropertyDetail = ({ property }) => {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
               <div>
                 <h3 className="text-lg font-medium mb-1">Type</h3>
-                <p className="text-gray-600">{property.type === 'apartment' ? 'Appartement' : 'Studio'}</p>
+                <p className="text-gray-600">{property.type === 'apartment' ? 'Appartement' : (property.type === 'studio' ? 'Studio' : property.type || 'Non spécifié')}</p>
               </div>
               <div>
                 <h3 className="text-lg font-medium mb-1">Surface</h3>
-                <p className="text-gray-600">{property.surfaceArea} m²</p>
+                <p className="text-gray-600">{property.surfaceArea || 0} m²</p>
               </div>
               <div>
                 <h3 className="text-lg font-medium mb-1">Chambres</h3>
-                <p className="text-gray-600">{property.bedroomCount}</p>
+                <p className="text-gray-600">{property.bedroomCount || 0}</p>
               </div>
               <div>
                 <h3 className="text-lg font-medium mb-1">Salles de bain</h3>
-                <p className="text-gray-600">{property.bathroomCount}</p>
+                <p className="text-gray-600">{property.bathroomCount || 0}</p>
               </div>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
               <div>
                 <h3 className="text-lg font-medium mb-1">Capacité</h3>
-                <p className="text-gray-600">{property.maxOccupancy} personnes maximum</p>
+                <p className="text-gray-600">{property.maxOccupancy || 2} personnes maximum</p>
               </div>
               <div>
                 <h3 className="text-lg font-medium mb-1">Entrée</h3>
@@ -87,14 +113,16 @@ const PropertyDetail = ({ property }) => {
             
             <h3 className="text-xl font-serif font-bold mb-3">À propos</h3>
             <p className="text-gray-700 whitespace-pre-line">
-              {property.description}
+              {property.description || 'Aucune description disponible.'}
             </p>
           </div>
           
           {/* Aménités */}
           <div className="border-b border-gray-200 pb-6 mb-6">
             <h3 className="text-xl font-serif font-bold mb-5">Équipements</h3>
-            <PropertyAmenities amenities={property.amenities} />
+            <ErrorBoundary>
+              <PropertyAmenities amenities={property.amenities} />
+            </ErrorBoundary>
           </div>
           
           {/* Points d'intérêt */}
@@ -220,7 +248,9 @@ const PropertyDetail = ({ property }) => {
         
         {/* Formulaire de réservation */}
         <div className="lg:col-span-1">
-          <PropertyBookingForm property={property} />
+          <ErrorBoundary fallback={bookingFormFallback}>
+            <PropertyBookingForm property={property} />
+          </ErrorBoundary>
         </div>
       </div>
     </div>

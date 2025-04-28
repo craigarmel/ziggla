@@ -1,27 +1,17 @@
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Button from '../common/Button';
-
-// Données fictives pour les propriétés en vedette
-const featuredProperties = [
-  {
-    id: 1,
-    title: 'Ziggla Luxury Apartments',
-    description: 'Appartement spacieux avec vue panoramique sur Londres, équipé d\'un spa privé et d\'une cuisine complète.',
-    image: 'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1980&q=80',
-    price: '£110',
-    features: ['200m²', 'Jacuzzi', 'Wi-Fi 66 Mb/s', 'Vue sur la ville']
-  },
-  {
-    id: 2,
-    title: 'Ziggla Luxury Properties',
-    description: 'Studio élégant et moderne avec salle de bain luxueuse, parfait pour les séjours professionnels ou romantiques.',
-    image: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
-    price: '£105',
-    features: ['200m²', 'Cuisine équipée', 'Salle de bain luxueuse', 'Près du stade']
-  }
-];
+import propertyService from '../../services/propertyService';
 
 const FeaturedProperties = () => {
+  const [featuredProperties, setFeaturedProperties] = useState([]);
+
+  useEffect(() => {
+    propertyService.getAllProperties().then((properties) => {
+      setFeaturedProperties(properties.slice(0, 2)); // Affiche les 2 premières propriétés
+    });
+  }, []);
+
   return (
     <section className="py-16 bg-gray-50">
       <div className="container-custom">
@@ -40,12 +30,12 @@ const FeaturedProperties = () => {
             <div key={property.id} className="bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300">
               <div className="relative h-64 overflow-hidden">
                 <img 
-                  src={property.image} 
+                  src={property.images[0]?.url || '/assets/default-property.jpg'} 
                   alt={property.title}
                   className="w-full h-full object-cover transition-transform duration-500 hover:scale-110"
                 />
                 <div className="absolute top-4 right-4 bg-gold-500 text-white px-4 py-1 rounded-full font-medium">
-                  {property.price}/nuit
+                  {property.pricing.basePrice}/nuit
                 </div>
               </div>
               
@@ -58,9 +48,9 @@ const FeaturedProperties = () => {
                 </p>
                 
                 <div className="flex flex-wrap gap-2 mb-6">
-                  {property.features.map((feature, index) => (
+                  {property.features && property.features.map((feature, index) => (
                     <span 
-                      key={index}
+                      key={`${property.id}-feature-${index}`}
                       className="bg-ocean-blue-50 text-ocean-blue-700 px-3 py-1 rounded-full text-sm"
                     >
                       {feature}
@@ -68,7 +58,7 @@ const FeaturedProperties = () => {
                   ))}
                 </div>
                 
-                <Link to={`/properties/${property.id}`}>
+                <Link to={`/property/${property._id}`}>
                   <Button variant="primary" fullWidth>
                     Voir les détails
                   </Button>

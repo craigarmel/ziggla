@@ -172,15 +172,16 @@ const RegisterForm = () => {
             </div>
           </div>
         </div>
-
-        <Button
-          type="submit"
-          variant="primary"
-          fullWidth
-          disabled={isLoading}
-        >
-          {isLoading ? 'Inscription en cours...' : 'S\'inscrire'}
-        </Button>
+        <div className="flex justify-center">
+          <Button
+            type="submit"
+            variant="primary"
+            fullWidth
+            disabled={isLoading}
+          >
+            {isLoading ? 'Inscription en cours...' : 'S\'inscrire'}
+          </Button>
+        </div>
       </form>
 
       <div className="mt-6 text-center">

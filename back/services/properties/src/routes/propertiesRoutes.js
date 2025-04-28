@@ -7,6 +7,7 @@ const {
   updateProperty,
   deleteProperty
 } = require('../controllers/propertiesController');
+const authMiddleware = require('../middleware/authMiddleware'); // adjust path as needed
 
 router
   .route('/')

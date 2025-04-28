@@ -23,7 +23,7 @@ function App() {
 
             {/* Propriétés */}
             <Route path="/properties" element={<PropertyListPage />} />
-            <Route path="/properties/:id" element={<PropertyDetailPage />} />
+            <Route path="/property/:id" element={<PropertyDetailPage />} />
 
             {/* Routes protégées */}
             <Route

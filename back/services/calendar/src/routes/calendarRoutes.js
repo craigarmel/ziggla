@@ -1,31 +1,38 @@
-// /back/services/calendar/src/routes/calendarRoutes.js
+/**
+ * Fichier: src/routes/calendarRoutes.js
+ * Description: Routes pour les opérations du calendrier
+ */
+
 const express = require('express');
 const router = express.Router();
 const {
-  getPropertyAvailability,
-  updateAvailability,
-  bulkUpdateAvailability
-} = require('../controllers/availabilityControllers');
-const { testGoogleCalendarConnection } = require('../utils/googleCalendar'); // Assurez-vous que le chemin est correct
+  getEvents,
+  getEvent,
+  createEvent,
+  updateEvent,
+  deleteEvent,
+  checkAvailability,
+  getCalendars
+} = require('../controllers/calendarController');
+// const {
+//   // authCheck,
+//   // googleAuthCheck,
+//   // validateEventData
+// } = require('../middleware');
 
-// Dans calendarRoutes.js
-router.get('/test-google-connection', async (req, res) => {
-    try {
-      const result = await testGoogleCalendarConnection();
-      res.status(200).json({
-        success: result,
-        message: result ? 'Connexion à Google Calendar réussie' : 'Échec de la connexion à Google Calendar'
-      });
-    } catch (error) {
-      res.status(500).json({
-        success: false,
-        error: error.message
-      });
-    }
-  });
+// Route pour obtenir tous les calendriers
+router.get('/calendars', getCalendars);
 
-router.get('/availability/:propertyId', getPropertyAvailability);
-router.post('/availability/:propertyId', updateAvailability);
-router.post('/availability/:propertyId/bulk', bulkUpdateAvailability);
+// Routes pour les événements
+router.get('/events',  getEvents);
+router.get('/events/:eventId',  getEvent);
+router.post('/events', createEvent);
+router.put('/events/:eventId', updateEvent);
+router.delete('/events/:eventId',  deleteEvent);
 
+// Route pour vérifier la disponibilité
+router.post('/availability',  checkAvailability);
+
+// Exporter le routeur
 module.exports = router;
+

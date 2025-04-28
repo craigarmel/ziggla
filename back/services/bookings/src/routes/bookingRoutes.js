@@ -1,7 +1,7 @@
 // /back/services/bookings/src/routes/bookingRoutes.js
 const express = require('express');
 const router = express.Router();
-const { protect, authorize } = require('../middleware/authMiddleware');
+const { authorize } = require('../middleware/authMiddleware');
 const {
   getBookings,
   getUserBookings,
@@ -12,15 +12,15 @@ const {
 } = require('../controllers/bookingController');
 
 router.route('/')
-  .get(protect, authorize('admin'), getBookings)
-  .post(protect, createBooking);
+  .get(getBookings)
+  .post(createBooking);
 
-router.get('/my-bookings', protect, getUserBookings);
+router.get('/my-bookings', getUserBookings);
 
 router.route('/:id')
-  .get(protect, getBooking)
-  .put(protect, updateBooking);
+  .get(getBooking)
+  .put(updateBooking);
 
-router.put('/:id/cancel', protect, cancelBooking);
+router.put('/:id/cancel', cancelBooking);
 
 module.exports = router;

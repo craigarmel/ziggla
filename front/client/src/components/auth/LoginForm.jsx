@@ -106,14 +106,13 @@ const LoginForm = () => {
           </div>
         </div>
 
-        <Button
-          type="submit"
-          variant="primary"
-          fullWidth
-          disabled={isLoading}
-        >
-          {isLoading ? 'Connexion en cours...' : 'Se connecter'}
-        </Button>
+        <div className="flex justify-center">
+          <Button
+            type="submit"
+          >
+            {isLoading ? 'Connexion en cours...' : 'Se connecter'}
+          </Button>
+        </div>
       </form>
 
       <div className="mt-6 text-center">
